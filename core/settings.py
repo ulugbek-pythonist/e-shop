@@ -29,6 +29,10 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
 ]
 
+INSTALLED_APPS += [
+    "users",
+]
+
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
@@ -107,6 +111,7 @@ USE_TZ = True
 
 STATIC_URL = "static/"
 STATIC_ROOT = BASE_DIR / "static/"
+STATICFILES_DIRS = ["core/static"]
 
 MEDIA_URL = "media/"
 MEDIA_ROOT = BASE_DIR / "media/"
