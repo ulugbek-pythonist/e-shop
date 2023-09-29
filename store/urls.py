@@ -1,4 +1,7 @@
-from django.shortcuts import render
+from django.urls import path
 
+from store import views
 
-urlpatterns = []
+urlpatterns = [
+    path("", views.store, name="store"),
+]
