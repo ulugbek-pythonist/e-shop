@@ -3,7 +3,13 @@
 <section class="section-content padding-y bg">
   <div class="container">
     <!-- ============================ COMPONENT 1 ================================= -->
-
+    {% if not cart_items %}
+    <div class="container">
+      <h2>No products in your cart</h2>
+      <br />
+      <h2><a href="{% url 'store' %}">Let's add</a></h2>
+    </div>
+    {% else %}
     <div class="row">
       <aside class="col-lg-9">
         <div class="card">
@@ -43,13 +49,14 @@
                   <div class="col">
                     <div class="input-group input-spinner">
                       <div class="input-group-prepend">
-                        <button
+                        <a
+                          href="{% url 'rem_cart' cartitem.product.id %}"
                           class="btn btn-light"
                           type="button"
                           id="button-plus"
                         >
                           <i class="fa fa-minus"></i>
-                        </button>
+                        </a>
                       </div>
                       <input
                         type="text"
@@ -57,13 +64,14 @@
                         value="{{cartitem.quantity}}"
                       />
                       <div class="input-group-append">
-                        <button
+                        <a
+                          href="{% url 'add_cart' cartitem.product.id %}"
                           class="btn btn-light"
                           type="button"
                           id="button-minus"
                         >
                           <i class="fa fa-plus"></i>
-                        </button>
+                        </a>
                       </div>
                     </div>
                     <!-- input-group.// -->
@@ -74,13 +82,18 @@
                   <div class="price-wrap">
                     <var class="price">{{cartitem.sub_total}} so'm</var>
                     <small class="text-muted">
-                      {{cartitem.product.price}} so'm</small
+                      {{cartitem.product.price}} so'mdan</small
                     >
                   </div>
                   <!-- price-wrap .// -->
                 </td>
                 <td class="text-right">
-                  <a href="" class="btn btn-danger"> Remove</a>
+                  <a
+                    href="{% url 'rem_cartitem' cartitem.product.id %}"
+                    class="btn btn-danger"
+                  >
+                    Remove</a
+                  >
                 </td>
               </tr>
               {% endfor %}
@@ -95,15 +108,17 @@
           <div class="card-body">
             <dl class="dlist-align">
               <dt>Total price:</dt>
-              <dd class="text-right">$69.97</dd>
+              <dd class="text-right">{{total}} so'm</dd>
             </dl>
             <dl class="dlist-align">
               <dt>Tax:</dt>
-              <dd class="text-right">$10.00</dd>
+              <dd class="text-right">{{tax}} so'm</dd>
             </dl>
             <dl class="dlist-align">
               <dt>Total:</dt>
-              <dd class="text-right text-dark b"><strong>$59.97</strong></dd>
+              <dd class="text-right text-dark b">
+                <strong>{{grand_total}} so'm</strong>
+              </dd>
             </dl>
             <hr />
             <p class="text-center mb-3">
@@ -123,6 +138,7 @@
       <!-- col.// -->
     </div>
     <!-- row.// -->
+    {% endif %}
     <!-- ============================ COMPONENT 1 END .// ================================= -->
   </div>
   <!-- container .//  -->
