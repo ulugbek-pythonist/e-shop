@@ -1,4 +1,6 @@
+from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, render
+from django.core.paginator import EmptyPage, Paginator, PageNotAnInteger
 from carts.models import CartItem
 from carts.views import _cart_id
 
@@ -12,12 +14,18 @@ def store(request, categor_slug=None):
 
     if categor_slug != None:
         categories = get_object_or_404(Category, slug=categor_slug)
-        products = Product.objects.filter(category=categories, is_available=True)
+        products = Product.objects.filter(category=categories, is_available=True).order_by("id")
+        paginator = Paginator(products, 1)
+        page = request.GET.get("page")
+        paged_products = paginator.get_page(page)
         product_count = products.count()
     else:
-        products = Product.objects.all().filter(is_available=True)
+        products = Product.objects.all().filter(is_available=True).order_by('id')
+        paginator = Paginator(products, 3)
+        page = request.GET.get("page")
+        paged_products = paginator.get_page(page)
         product_count = products.count()
-    contextim = {"products": products, "counter": product_count}
+    contextim = {"products": paged_products, "counter": product_count}
     return render(request, "store/store.html", context=contextim)
 
 
@@ -38,3 +46,14 @@ def product_detail(request, category_slug, product_slug):
         "in_cart": in_cart,  # type: ignore
     }
     return render(request, "store/product_detail.html", context=contex)
+
+def search(request):
+    if "keyword" in request.GET:
+        keyword = request.GET["keyword"]
+
+    if keyword:
+        products = Product.objects.all().filter(description__icontains=keyword)
+    
+    cont = {"products":products}
+
+    return render(request,"store/store.html",context=cont)
