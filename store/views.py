@@ -1,3 +1,4 @@
+from django.db.models import Q
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, render
 from django.core.paginator import EmptyPage, Paginator, PageNotAnInteger
@@ -14,13 +15,15 @@ def store(request, categor_slug=None):
 
     if categor_slug != None:
         categories = get_object_or_404(Category, slug=categor_slug)
-        products = Product.objects.filter(category=categories, is_available=True).order_by("id")
+        products = Product.objects.filter(
+            category=categories, is_available=True
+        ).order_by("id")
         paginator = Paginator(products, 1)
         page = request.GET.get("page")
         paged_products = paginator.get_page(page)
         product_count = products.count()
     else:
-        products = Product.objects.all().filter(is_available=True).order_by('id')
+        products = Product.objects.all().filter(is_available=True).order_by("id")
         paginator = Paginator(products, 3)
         page = request.GET.get("page")
         paged_products = paginator.get_page(page)
@@ -47,13 +50,20 @@ def product_detail(request, category_slug, product_slug):
     }
     return render(request, "store/product_detail.html", context=contex)
 
+
 def search(request):
     if "keyword" in request.GET:
         keyword = request.GET["keyword"]
 
     if keyword:
-        products = Product.objects.all().filter(description__icontains=keyword)
-    
-    cont = {"products":products}
+        products = Product.objects.all().filter(
+            Q(description__icontains=keyword) | Q(title__icontains=keyword)
+        )
+        product_count = products.count()
 
-    return render(request,"store/store.html",context=cont)
+    cont = {
+        "products": products,
+        "product_count": product_count,
+    }
+
+    return render(request, "store/store.html", context=cont)
