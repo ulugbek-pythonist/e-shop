@@ -1,0 +1,7 @@
+media/
+static/
+__pycache__/
+.env
+Pipfile
+Pipfile.lock
+db.sqlite3

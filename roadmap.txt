@@ -1,5 +1,0 @@
-1. Category and custom User models, pre-populated field,configure static and media files
-
-2.Product model, displaying products on store page, display by Category
-
-3. Product detail

@@ -21,3 +21,34 @@ class Product(models.Model):
 
     def __str__(self) -> str:
         return self.title
+
+
+class VariationManager(models.Manager):
+    def colors(self):
+        return super(VariationManager, self).filter(
+            variation_type="color", is_active=True
+        )
+
+    def sizes(self):
+        return super(VariationManager, self).filter(
+            variation_type="size", is_active=True
+        )
+
+
+var_type_choices = (
+    ("color", "color"),
+    ("size", "size"),
+)
+
+
+class Variation(models.Model):
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    variation_type = models.CharField(max_length=100, choices=var_type_choices)
+    variation_val = models.CharField(max_length=100)
+    is_active = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now=True)
+
+    objects = VariationManager()
+
+    def __str__(self) -> str:
+        return self.product.title

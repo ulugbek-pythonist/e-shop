@@ -2,7 +2,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.core.exceptions import ObjectDoesNotExist
 from carts.models import Cart, CartItem
 
-from store.models import Product
+from store.models import Product, Variation
 
 
 def _cart_id(request):
@@ -14,6 +14,21 @@ def _cart_id(request):
 
 def add_cart(request, product_id):
     product = Product.objects.get(id=product_id)
+    product_variation = []
+    if request.method == "POST":
+        for item in request.POST:
+            key = item
+            value = request.POST[key]
+
+            try:
+                variation = Variation.objects.get(
+                    product=product,
+                    variation_type__iexact=key,
+                    variation_val__iexact=value,
+                )
+                product_variation.append(variation)
+            except Exception as e:
+                print(f"{type(e)} {e}")
     try:
         cart = Cart.objects.get(cart_id=_cart_id(request))
     except Cart.DoesNotExist:
